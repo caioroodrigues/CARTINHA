@@ -41,36 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isOpen) {
             createHearts();
         }
-    });
-    
-    function createHearts() {
-        heartsContainer.innerHTML = '';
-        
-        for (let i = 0; i < 50; i++) {
-            setTimeout(() => {
-                const heart = document.createElement('div');
-                heart.classList.add('heart');
-                heart.innerHTML = '❤️';
-                
-                const startPositionX = Math.random() * window.innerWidth;
-                heart.style.left = `${startPositionX}px`;
-                heart.style.bottom = '-20px';
-                
-                const size = Math.random() * 20 + 10;
-                heart.style.fontSize = `${size}px`;
-                
-                const duration = Math.random() * 3 + 3;
-                heart.style.animationDuration = `${duration}s`;
-                
-                heartsContainer.appendChild(heart);
-                
-                setTimeout(() => {
-                    heart.remove();
-                }, duration * 1000);
-            }, i * 100);
-        }
-    }
-    
+    });    
     document.addEventListener('keydown', function(e) {
         if (e.code === 'Space') {
             e.preventDefault();
@@ -92,4 +63,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
+});
+
+// Cria muitos corações de fundo
+function createHearts() {
+    const heartsContainer = document.getElementById('hearts-container');
+    const heartCount = 100; // Quantidade de corações
+    
+    for (let i = 0; i < heartCount; i++) {
+        const heart = document.createElement('div');
+        heart.innerHTML = '❤️';
+        heart.classList.add('heart');
+        
+        // Posição aleatória e atraso na animação
+        heart.style.setProperty('--random-x', Math.random());
+        heart.style.left = `${Math.random() * 100}vw`;
+        heart.style.animationDelay = `${Math.random() * 5}s`;
+        
+        heartsContainer.appendChild(heart);
+    }
+}
+
+// Abrir envelope com muitos corações
+document.getElementById('envelope').addEventListener('click', function() {
+    this.classList.toggle('open');
+    
+    // Cria os corações só quando abre
+    if (this.classList.contains('open')) {
+        createHearts();
+    }
 });
