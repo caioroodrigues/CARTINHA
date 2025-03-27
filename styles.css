@@ -176,3 +176,20 @@ body {
     justify-content: center;
     height: 100%;
 }
+
+.love-message {
+    font-family: 'Poppins', cursive;
+    font-size: 1rem;  /* Reduzi de 1.2rem para 1rem */
+    line-height: 1.5;
+    color: #d23669;
+    text-align: center;
+    padding: 15px;    /* Reduzi de 20px para 15px */
+    margin: 0;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
