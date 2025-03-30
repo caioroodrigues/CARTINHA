@@ -74,10 +74,11 @@ body {
 .letter {
     position: absolute;
     width: 90%;
-    height: 90%;
+    height: auto;  /* Alterado de 90% para auto */
+    min-height: 90%;  /* Adicionado mínimo */
     background-color: white;
     border-radius: 3px;
-    padding: 1.0rem;
+    padding: 1.5rem;  /* Aumentado de 1.0 para 1.5rem */
     top: 5%;
     left: 5%;
     z-index: 2;
@@ -85,7 +86,9 @@ body {
     transform-origin: bottom;
     transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    overflow: auto; /* Adicionado para conter o conteúdo */
+    overflow: visible !important;  /* Alterado de auto para visible */
+    display: flex;  /* Adicionado */
+    align-items: center;  /* Adicionado */
 }
 
 .letter-content {
