@@ -3,37 +3,443 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartinha Fofa</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Cartinha Perfeita</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Comic+Neue:wght@700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #fff5f7 0%, #f8f0ff 100%);
+        }
+
+        /* Efeito de emojis de fundo */
+        .emoji-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .emoji-bg {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.1;
+            animation: floatEmoji linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes floatEmoji {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.1;
+            }
+            50% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0.1;
+            }
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .title {
+            color: #d23669;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            font-family: 'Comic Neue', cursive;
+            text-shadow: 2px 2px 4px rgba(210, 54, 105, 0.2);
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .envelope {
+            position: relative;
+            width: min(90vw, 350px);
+            height: min(60vw, 240px);
+            cursor: pointer;
+            margin: 0 auto;
+            perspective: 1000px;
+            filter: drop-shadow(0 10px 20px rgba(210, 54, 105, 0.3));
+        }
+
+        .envelope-front, .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ff8fab 0%, #ffb3c6 100%);
+            border-radius: 8px;
+            backface-visibility: hidden;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 15px 35px rgba(255, 105, 180, 0.3);
+        }
+
+        .envelope-front {
+            z-index: 3;
+            transform-origin: bottom;
+        }
+
+        .envelope-back {
+            background: linear-gradient(145deg, #fb6f92 0%, #ff8fab 100%);
+            z-index: 1;
+        }
+
+        .letter {
+            position: absolute;
+            width: 94%;
+            height: 94%;
+            background: #fffafb;
+            border-radius: 8px;
+            padding: 20px;
+            top: 3%;
+            left: 3%;
+            z-index: 2;
+            transform: translateY(-110%) rotateX(90deg);
+            transform-origin: bottom;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: inset 0 0 15px rgba(255, 105, 180, 0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .letter-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s 0.4s;
+            padding: 10px;
+        }
+
+        .message-container {
+            width: 100%;
+            max-height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #ff8fab #fff5f7;
+            display: flex;
+            justify-content: center;
+        }
+
+        .message-container::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .message-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(#ff6b8b, #ff8e53);
+            border-radius: 10px;
+        }
+
+        .love-message {
+            font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+            line-height: 1.5;
+            color: #5e2c3e;
+            text-align: center;
+            word-wrap: break-word;
+            hyphens: auto;
+            padding: 10px;
+            margin: 0;
+            animation: float 3s ease-in-out infinite;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-1deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+
+        .envelope.open .envelope-front {
+            transform: rotateX(180deg);
+        }
+
+        .envelope.open .letter {
+            transform: translateY(0) rotateX(0);
+        }
+
+        .envelope.open .letter-content {
+            opacity: 1;
+        }
+
+        /* Efeitos de elementos caindo */
+        .falling-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .falling-element {
+            position: absolute;
+            font-size: 24px;
+            animation: falling linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes falling {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .music-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff6b8b, #ff8e53);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(255, 107, 139, 0.6);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .spotify-player {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 300px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            border: none;
+            opacity: 0.95;
+            transition: all 0.5s;
+        }
+
+        .video-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.6);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .video-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsividade extra */
+        @media (max-width: 500px) {
+            .love-message {
+                font-size: clamp(1rem, 4vw, 1.3rem);
+            }
+            .spotify-player {
+                width: 250px;
+                bottom: 80px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="emoji-background"></div>
-    
+    <div class="emoji-background" id="emojiBackground"></div>
+    <div class="falling-elements" id="fallingElements"></div>
+
     <div class="container">
-        <h1 class="title">BOM DIA MEU DOCINHO DE LEITE ❤️❤️</h1>
+        <h1 class="title">BOM DIA DOCINHO DE LEITE ❤️</h1>
         
-        <div class="envelope-wrapper">
-            <div class="envelope" id="envelope">
-                <div class="envelope-front"></div>
-                <div class="envelope-back"></div>
-                <div class="letter" id="letter">
-                    <div class="letter-content">
-                        <p class="love-message">"<p class="mensagem-resumida">Seu riso ecoa em meus dias vazios, transformando ordinário em extraordinário. Você é alquimia pura, meu paradoxo favorito.❤️</p>"</p>
+        <div class="envelope" id="envelope">
+            <div class="envelope-front"></div>
+            <div class="envelope-back"></div>
+            <div class="letter" id="letter">
+                <div class="letter-content">
+                    <div class="message-container">
+                        <p class="love-message" id="dynamicMessage">
+                            "Que essa semana traga tudo de bom que você merece... e eu prometo fazer minha parte com muito amor!❤️💕"
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="video-link-container">
-            <a href="https://drive.google.com/file/d/1HLPSQqll3B39KDOPSbgG0-q-W3JnTVPQ/view?usp=sharing" target="_blank" class="video-link">
-                CLIQUE AQUI
-            </a>
-        </div>
-    
-        <div class="hearts-container" id="hearts-container"></div>
     </div>
 
-    <script src="script.js"></script>
+    <button class="music-btn" id="musicBtn">🎵</button>
+    <!-- Substitua o link abaixo pelo link da música específica que deseja -->
+    <iframe class="spotify-player" id="spotifyPlayer" src="https://open.spotify.com/embed/track/6CGMZijOAZvTXG21T8t6R0?utm_source=generator&theme=0" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+    <a href="https://youtube.com/shorts/-2rn7lqBRSE?feature=share" target="_blank" class="video-btn" id="videoBtn">▶️</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos
+            const envelope = document.getElementById('envelope');
+            const fallingContainer = document.getElementById('fallingElements');
+            const emojiBackground = document.getElementById('emojiBackground');
+            const musicBtn = document.getElementById('musicBtn');
+            const spotifyPlayer = document.getElementById('spotifyPlayer');
+            const videoBtn = document.getElementById('videoBtn');
+            
+            // Configuração inicial
+            let musicVisible = false;
+            const loveElements = ['🌸', '🌼', '🌺', '🌻', '🌹', '🌷', '💐', '💖', '💕', '💓', '💗', '💘', '💝', '💞', '❤️', '🐰', '🐻', '🐶', '🐱', '🦊', '🐨', '🐼', '🦄', '🍭', '🍬', '🍫', '🧁', '🍰', '🎂', '🍩', '🍪', '🌈', '✨', '🌟', '💫', '🎀', '🎁', '🎈', '🪄', '🧸'];
+            const colors = ['#ff6b8b', '#ff8e53', '#ffd166', '#06d6a0', '#118ab2', '#7209b7'];
+            
+            // Cria emojis de fundo
+            function createEmojiBackground() {
+                for (let i = 0; i < 100; i++) {
+                    const emoji = document.createElement('div');
+                    emoji.className = 'emoji-bg';
+                    emoji.innerHTML = loveElements[Math.floor(Math.random() * loveElements.length)];
+                    emoji.style.left = Math.random() * 100 + 'vw';
+                    emoji.style.top = Math.random() * 100 + 'vh';
+                    emoji.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                    emoji.style.animationDuration = (Math.random() * 30 + 20) + 's';
+                    emoji.style.animationDelay = (Math.random() * 10) + 's';
+                    emoji.style.opacity = Math.random() * 0.1 + 0.05;
+                    emojiBackground.appendChild(emoji);
+                }
+            }
+            
+            // Cria elementos flutuantes
+            function createFallingElements() {
+                for (let i = 0; i < 40; i++) {
+                    setTimeout(() => {
+                        const element = document.createElement('div');
+                        element.className = 'falling-element';
+                        element.innerHTML = loveElements[Math.floor(Math.random() * loveElements.length)];
+                        element.style.left = Math.random() * 100 + 'vw';
+                        element.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                        element.style.animationDuration = (Math.random() * 10 + 8) + 's';
+                        element.style.animationDelay = (Math.random() * 5) + 's';
+                        element.style.opacity = Math.random() * 0.5 + 0.3;
+                        element.style.color = colors[Math.floor(Math.random() * colors.length)];
+                        fallingContainer.appendChild(element);
+                    }, i * 200);
+                }
+            }
+            
+            // Cria corações caindo ao abrir
+            function createHearts() {
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => {
+                        const heart = document.createElement('div');
+                        heart.className = 'falling-element';
+                        heart.innerHTML = '❤️';
+                        heart.style.left = Math.random() * 100 + 'vw';
+                        heart.style.fontSize = (Math.random() * 25 + 20) + 'px';
+                        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                        heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+                        fallingContainer.appendChild(heart);
+                        
+                        setTimeout(() => heart.remove(), 5000);
+                    }, i * 100);
+                }
+            }
+            
+            // Ajusta texto dinamicamente
+            function adjustText() {
+                const container = document.querySelector('.message-container');
+                const message = document.getElementById('dynamicMessage');
+                let fontSize = parseInt(window.getComputedStyle(message).fontSize);
+                
+                while (container.scrollHeight > container.clientHeight && fontSize > 14) {
+                    fontSize -= 0.5;
+                    message.style.fontSize = fontSize + 'px';
+                }
+            }
+            
+            // Eventos
+            envelope.addEventListener('click', function() {
+                this.classList.toggle('open');
+                
+                if (this.classList.contains('open')) {
+                    createHearts();
+                    setTimeout(adjustText, 300);
+                }
+            });
+            
+            musicBtn.addEventListener('click', function() {
+                musicVisible = !musicVisible;
+                if (musicVisible) {
+                    spotifyPlayer.style.display = 'block';
+                    this.textContent = '🔊';
+                } else {
+                    spotifyPlayer.style.display = 'none';
+                    this.textContent = '🎵';
+                }
+            });
+
+            // Configura o botão de vídeo (substitua o link pelo seu vídeo)
+            videoBtn.addEventListener('click', function(e) {
+                // O link já está definido no href do elemento <a>
+                // Você pode adicionar lógica adicional aqui se necessário
+            });
+            
+            // Inicia efeitos
+            createEmojiBackground();
+            createFallingElements();
+            
+            // Configura player do Spotify para autoplay
+            spotifyPlayer.style.display = 'none';
+            
+            // Ajuste inicial
+            setTimeout(adjustText, 100);
+        });
+    </script>
 </body>
 </html>
