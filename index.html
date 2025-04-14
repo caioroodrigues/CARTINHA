@@ -83,16 +83,22 @@
       overflow: hidden;
     }
 
-    .btns button:hover {
+    .btns button:disabled {
+      background: #555;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .btns button:hover:not(:disabled) {
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(255, 92, 138, 0.4);
     }
 
-    .btns button:active {
+    .btns button:active:not(:disabled) {
       transform: translateY(1px);
     }
 
-    .btns button::before {
+    .btns button:not(:disabled)::before {
       content: '';
       position: absolute;
       top: 0;
@@ -103,7 +109,7 @@
       transition: 0.5s;
     }
 
-    .btns button:hover::before {
+    .btns button:hover:not(:disabled)::before {
       left: 100%;
     }
 
@@ -210,6 +216,13 @@
       margin-right: 8px;
     }
 
+    .day-indicator {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #ff8ba7;
+      font-weight: 600;
+    }
+
     @keyframes pulse {
       0% {
         transform: scale(1);
@@ -225,13 +238,13 @@
       }
     }
 
-    @keyframes float {
+    @keyframes floatDown {
       0% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(-100px) rotate(0deg);
         opacity: 1;
       }
       100% {
-        transform: translateY(-100vh) rotate(360deg);
+        transform: translateY(100vh) rotate(360deg);
         opacity: 0;
       }
     }
@@ -251,27 +264,6 @@
       }
       100% {
         transform: scale(1);
-      }
-    }
-
-    .confetti {
-      position: fixed;
-      width: 10px;
-      height: 10px;
-      background-color: #ff8ba7;
-      opacity: 0;
-      z-index: 9999;
-      animation: confettiFall 5s linear forwards;
-    }
-
-    @keyframes confettiFall {
-      0% {
-        transform: translateY(-100vh) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
       }
     }
 
@@ -330,89 +322,99 @@
 
   <div class="background"></div>
 
-  <h1>Bom dia, meu caldo de cana ❤️</h1>
-  <h2>Cada dia da semana ou uma surpresinha especial 💌</h2>
+  <h1>Bom dia, meu amor ❤️</h1>
+  <h2>Escolha um dia da semana para ler sua cartinha especial</h2>
 
   <div class="btns">
-    <button ="mostrarCarta('segunda')">Segunda 🌈</button>
-    <button ="mostrarCarta('terca')">Terça 💞</button>
-    <button ="mostrarCarta('quarta')">Quarta 🍯</button>
-    <button ="mostrarCarta('quinta')">Quinta 🌟</button>
-    <button ="mostrarCarta('sexta')">Sexta 💃</button>
-    <button ="mostrarCarta('sabado')">Sábado 💤</button>
-    <button onclick="mostrarCarta('domingo')">Domingo ☕</button>
-    <button ="mostrarCarta('surpresa')">Surpresa 💖</button>
+    <button id="btn-segunda" onclick="mostrarCarta('segunda')">Segunda 🌈</button>
+    <button id="btn-terca" onclick="mostrarCarta('terca')">Terça 💞</button>
+    <button id="btn-quarta" onclick="mostrarCarta('quarta')">Quarta 🍯</button>
+    <button id="btn-quinta" onclick="mostrarCarta('quinta')">Quinta 🌟</button>
+    <button id="btn-sexta" onclick="mostrarCarta('sexta')">Sexta 💃</button>
+    <button id="btn-sabado" onclick="mostrarCarta('sabado')">Sábado 💤</button>
+    <button id="btn-domingo" onclick="mostrarCarta('domingo')">Domingo ☕</button>
   </div>
 
   <div class="envelope-wrapper">
     <div class="letter">
       <div class="letter-content" id="conteudo-carta">
-        Todos os dias uma cartinha diferente pra você ✨<br>
-        Cada dia uma mensagem carinhosa, a surpresa é logo menos !!!
+        Escolha um dia acima para ler sua cartinha especial ✨<br>
+        Cada dia tem uma mensagem carinhosa esperando por você!
+        <div class="day-indicator" id="day-indicator"></div>
       </div>
     </div>
   </div>
 
-  <button class="music-btn" onclick="toggleSpotify()">
-    <i class="fab fa-spotify"></i>
-  </button>
-
   <script>
+    // Objeto com as mensagens
     const cartas = {
       segunda: {
-        mensagem: "Que sua semana comece com leveza no coração. Você é capaz de conquistar o mundo, meu amor! 🌈<br><br><strong>Lembre-se:</strong> Você é mais forte do que imagina e mais amado do que pode sentir.",
-        musica: "https://open.spotify.com/track/5JNxbFEZyq0sGguQq9eXk8?si=6e8a8b8a8a8a8a8a"
+        mensagem: "Começando a semana com você na mente e no coração! Que essa segunda seja leve como seu sorriso e cheia de possibilidades. 🌈<br><br><strong>Energia positiva:</strong> Você transforma desafios em oportunidades só por ser quem é.",
+        musica: "https://open.spotify.com/intl-pt/track/2wUlYDGGXlSvm2NkGj0Qio?si=dc545d7b891245cf"
       },
       terca: {
-        mensagem: "Terça-feira com jeitinho de abraço apertado. Tudo vai dar certo, e eu tô aqui torcendo por você! 💞<br><br><strong>Pensamento do dia:</strong> Cada pequeno passo é uma vitória. Celebre suas conquistas!",
+        mensagem: "Terça com gostinho de 'quase lá'! Cada hora que passa é uma hora mais perto dos seus sonhos. 💞<br><br><strong>Lembrete:</strong> Não subestime seu progresso - olhe quanto você já caminhou!",
         musica: "https://open.spotify.com/track/3V1MK5NS5IuxxYZkDDEEsy?si=7b8a8b8a8a8a8a8a"
       },
       quarta: {
-        mensagem: "Metade da semana, e você já foi incrível até aqui. Que o resto seja ainda mais doce que mel. 🍯<br><br><strong>Dica:</strong> Respire fundo e lembre que você está fazendo o seu melhor.",
-        musica: "https://open.spotify.com/intl-pt/track/1H4Y9uW4N0LsxJUz0VnaPJ?si=59075ff3f7114362"
+        mensagem: "Metade da semana, amor! Como um abraço quente no inverno, você aquece meus dias. 🍯<br><br><strong>Dica do dia:</strong> Respire fundo e saboreie os pequenos momentos felizes.",
+        musica: "https://open.spotify.com/track/7i5rBwD9i0fF8tD6fD0w1X?si=8c8a8b8a8a8a8a8a"
       },
       quinta: {
-        mensagem: "Tá quase lá, amorzinho! Continue firme, cuidando de si e acreditando na sua luz. 🌟<br><br><strong>Afirmação:</strong> Eu mereço amor, paz e tudo de bom que a vida tem a oferecer.",
-        musica: "https://open.spotify.com/intl-pt/track/7hR22TOX3RorxJPcsz5Wbo?si=cf2483bff6514aa0"
+        mensagem: "Quinta-feira é pré-sexta, e você é pré-tudo de bom na minha vida! 🌟<br><br><strong>Afirmação:</strong> Eu mereço amor, descanso e momentos de pura felicidade.",
+        musica: "https://open.spotify.com/track/5JNxbFEZyq0sGguQq9eXk8?si=9d8a8b8a8a8a8a8a"
       },
       sexta: {
-        mensagem: "É sexta, bebê! Que seu dia seja cheio de sorrisos e pensamentos bons. BORA QUE BORA! 💃<br><br><strong>Celebre:</strong> Você vai ver tudo voltando pro lugar. Vai ver Deus respondendo, aos poucos, cada oração. Vai viver sonhos que pareciam distantes demais... e perceber que nada foi em vão. O tempo de Deus chega, e quando chega, transforma. 🤍",
-        musica: "https://open.spotify.com/intl-pt/track/0VjIjW4GlUZAMYd2vXMi3b?si=227e8cc8cdd04005"
+        mensagem: "Sextou, meu amor! Que seu dia seja tão especial quanto você é pra mim. 💃<br><br><strong>Celebre:</strong> Você superou mais uma semana com sua força única!",
+        musica: "https://open.spotify.com/track/3V1MK5NS5IuxxYZkDDEEsy?si=0e8a8b8a8a8a8a8a"
       },
       sabado: {
-        mensagem: "Sabadou com carinho e preguiça gostosa. Que hoje você descanse e sinta meu afeto. 💤<br><br><strong>Permissão:</strong> Hoje é dia de descansar sem culpa e recarregar as energias.",
-        musica: "https://open.spotify.com/intl-pt/track/22sDLvlzAJzH0BHiMSOfRP?si=5e7617714d304c3e"
+        mensagem: "Sabadou é feito para descansar, curtir e se encher de amor. Relaxe que você merece! 💤<br><br><strong>Permissão oficial:</strong> Ficar de preguiça hoje não é opcional, é obrigatório!",
+        musica: "https://open.spotify.com/track/7i5rBwD9i0fF8tD6fD0w1X?si=1f8a8b8a8a8a8a8a"
       },
       domingo: {
-        mensagem: "Domingo é dia de se recarregar com amor e paz. Que seu coração esteja quentinho como um abraço meu. ☕<br><br><strong>Desejo:</strong> Que a nova semana te traga alegrias e realizações.",
-        musica: "https://open.spotify.com/intl-pt/track/54KFQB6N4pn926IUUYZGzK?si=a81ab7bd61e64295"
-      },
-      surpresa: {
-        mensagens: [
-          " Pizza ou Sushi hoje ?? ❤️✨"
-        ],
-        musica: "https://open.spotify.com/track/3V1MK5NS5IuxxYZkDDEEsy?si=3h8a8b8a8a8a8a8a"
+        mensagem: "Domingo: dia de recarregar as energias e se preparar para brilhar! ☕<br><br><strong>Desejo:</strong> Que a nova semana te traga sorrisos fáceis e conquistas doces.",
+        musica: "https://open.spotify.com/track/5JNxbFEZyq0sGguQq9eXk8?si=2g8a8b8a8a8a8a8a"
       }
     };
 
     let currentMusicLink = "";
+    let currentDay = new Date().getDay(); // 0=Domingo, 1=Segunda, ..., 6=Sábado
+
+    // Mapeia os dias JS para nossos botões (ajuste para semana começar na segunda)
+    const diasSemana = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+    const diaAtual = diasSemana[currentDay];
+
+    // Atualiza os botões com base no dia atual
+    function setupButtons() {
+      const dayIndicator = document.getElementById('day-indicator');
+      dayIndicator.textContent = `Hoje é ${diaAtual.charAt(0).toUpperCase() + diaAtual.slice(1)}-feira!`;
+      
+      // Desabilita todos os botões exceto o do dia atual
+      document.querySelectorAll('.btns button').forEach(btn => {
+        const btnId = btn.id.replace('btn-', '');
+        if (btnId !== diaAtual) {
+          btn.disabled = true;
+        }
+      });
+    }
 
     function mostrarCarta(dia) {
       const div = document.getElementById('conteudo-carta');
-      createHearts(15);
+      createHearts(30); // Aumentei para 30 corações
       
-      if (dia === 'surpresa') {
-        const mensagens = cartas.surpresa.mensagens;
-        const aleatoria = mensagens[Math.floor(Math.random() * mensagens.length)];
-        div.innerHTML = aleatoria + '<br><br><a href="' + cartas.surpresa.musica + '" target="_blank" class="spotify-link"><i class="fab fa-spotify"></i> Música para você</a>';
-        currentMusicLink = cartas.surpresa.musica;
-        createConfetti(30);
-      } else {
-        div.innerHTML = cartas[dia].mensagem + '<br><br><a href="' + cartas[dia].musica + '" target="_blank" class="spotify-link"><i class="fab fa-spotify"></i> Música para você</a>';
-        currentMusicLink = cartas[dia].musica;
-        if (dia === 'sabado' || dia === 'domingo') {
-          createConfetti(20);
-        }
+      // Verifica se é o dia correto
+      if (dia !== diaAtual) {
+        div.innerHTML = `Ops! Esta cartinha só pode ser aberta na ${dia.charAt(0).toUpperCase() + dia.slice(1)}-feira! 💖<br><br>Volte no dia certo para ler sua mensagem especial.`;
+        return;
+      }
+      
+      div.innerHTML = cartas[dia].mensagem + '<br><br><a href="' + cartas[dia].musica + '" target="_blank" class="spotify-link"><i class="fab fa-spotify"></i> Música para você</a>';
+      currentMusicLink = cartas[dia].musica;
+      
+      // Efeito extra nos finais de semana
+      if (dia === 'sabado' || dia === 'domingo') {
+        createHearts(50); // Mais corações no fim de semana
       }
       
       // Efeito de batimento cardíaco na carta
@@ -432,12 +434,13 @@
     function createHearts(count) {
       for (let i = 0; i < count; i++) {
         const heart = document.createElement('div');
-        heart.innerHTML = '❤️';
+        heart.innerHTML = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍'][Math.floor(Math.random() * 9)];
         heart.className = 'heart';
         heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.top = Math.random() * 100 + 'vh';
-        heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
-        heart.style.animation = `float ${Math.random() * 3 + 2}s linear forwards`;
+        heart.style.top = -50 + 'px';
+        heart.style.fontSize = (Math.random() * 25 + 15) + 'px';
+        heart.style.animation = `floatDown ${Math.random() * 3 + 2}s linear forwards`;
+        heart.style.animationDelay = Math.random() * 2 + 's';
         document.body.appendChild(heart);
         
         setTimeout(() => {
@@ -446,27 +449,15 @@
       }
     }
 
-    function createConfetti(count) {
-      for (let i = 0; i < count; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.backgroundColor = `hsl(${Math.random() * 60 + 330}, 100%, ${Math.random() * 30 + 60}%)`;
-        confetti.style.width = (Math.random() * 10 + 5) + 'px';
-        confetti.style.height = (Math.random() * 10 + 5) + 'px';
-        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        document.body.appendChild(confetti);
-        
-        setTimeout(() => {
-          confetti.remove();
-        }, 5000);
-      }
-    }
-
-    // Criar alguns corações iniciais
+    // Inicialização
     window.onload = function() {
-      createHearts(350);
-      setTimeout(createHearts, 2000, 5);
+      setupButtons();
+      createHearts(15); // Chuva inicial de corações
+      
+      // Mostra automaticamente a carta do dia atual
+      setTimeout(() => {
+        mostrarCarta(diaAtual);
+      }, 500);
     };
   </script>
 
