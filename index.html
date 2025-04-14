@@ -83,22 +83,20 @@
       overflow: hidden;
     }
 
-    .btns button:disabled {
-      background: #555;
-      cursor: not-allowed;
-      opacity: 0.6;
+    .btns button.disabled-btn {
+      background: linear-gradient(145deg, #555 0%, #333 100%);
     }
 
-    .btns button:hover:not(:disabled) {
+    .btns button:hover {
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(255, 92, 138, 0.4);
     }
 
-    .btns button:active:not(:disabled) {
+    .btns button:active {
       transform: translateY(1px);
     }
 
-    .btns button:not(:disabled)::before {
+    .btns button::before {
       content: '';
       position: absolute;
       top: 0;
@@ -109,8 +107,20 @@
       transition: 0.5s;
     }
 
-    .btns button:hover:not(:disabled)::before {
+    .btns button:hover::before {
       left: 100%;
+    }
+
+    .disabled-btn {
+      position: relative;
+    }
+    .disabled-btn::after {
+      content: "🔒";
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8em;
     }
 
     .envelope-wrapper {
@@ -346,11 +356,10 @@
   </div>
 
   <script>
-    // Objeto com as mensagens
     const cartas = {
       segunda: {
         mensagem: "Começando a semana com você na mente e no coração! Que essa segunda seja leve como seu sorriso e cheia de possibilidades. 🌈<br><br><strong>Energia positiva:</strong> Você transforma desafios em oportunidades só por ser quem é.",
-        musica: "https://open.spotify.com/intl-pt/track/2wUlYDGGXlSvm2NkGj0Qio?si=dc545d7b891245cf"
+        musica: "https://open.spotify.com/intl-pt/track/2wUlYDGGXlSvm2NkGj0Qio?si=599a09fe1a3a40ec"
       },
       terca: {
         mensagem: "Terça com gostinho de 'quase lá'! Cada hora que passa é uma hora mais perto dos seus sonhos. 💞<br><br><strong>Lembrete:</strong> Não subestime seu progresso - olhe quanto você já caminhou!",
@@ -380,46 +389,40 @@
 
     let currentMusicLink = "";
     let currentDay = new Date().getDay(); // 0=Domingo, 1=Segunda, ..., 6=Sábado
-
-    // Mapeia os dias JS para nossos botões (ajuste para semana começar na segunda)
     const diasSemana = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
     const diaAtual = diasSemana[currentDay];
 
-    // Atualiza os botões com base no dia atual
     function setupButtons() {
       const dayIndicator = document.getElementById('day-indicator');
       dayIndicator.textContent = `Hoje é ${diaAtual.charAt(0).toUpperCase() + diaAtual.slice(1)}-feira!`;
       
-      // Desabilita todos os botões exceto o do dia atual
       document.querySelectorAll('.btns button').forEach(btn => {
         const btnId = btn.id.replace('btn-', '');
         if (btnId !== diaAtual) {
-          btn.disabled = true;
+          btn.classList.add('disabled-btn');
         }
       });
     }
 
     function mostrarCarta(dia) {
       const div = document.getElementById('conteudo-carta');
-      createHearts(30); // Aumentei para 30 corações
+      createHearts(40); // Chuva intensa de corações sempre que clicar
       
-      // Verifica se é o dia correto
       if (dia !== diaAtual) {
-        div.innerHTML = `Ops! Esta cartinha só pode ser aberta na ${dia.charAt(0).toUpperCase() + dia.slice(1)}-feira! 💖<br><br>Volte no dia certo para ler sua mensagem especial.`;
+        div.innerHTML = `❤️❤️❤️<br>Essa mensagem é secreta e só libera na ${dia.charAt(0).toUpperCase() + dia.slice(1)}-feira!<br>Mas toma esses corações de amor!`;
+        createHearts(20); // Corações extras
         return;
       }
       
       div.innerHTML = cartas[dia].mensagem + '<br><br><a href="' + cartas[dia].musica + '" target="_blank" class="spotify-link"><i class="fab fa-spotify"></i> Música para você</a>';
       currentMusicLink = cartas[dia].musica;
       
-      // Efeito extra nos finais de semana
       if (dia === 'sabado' || dia === 'domingo') {
-        createHearts(50); // Mais corações no fim de semana
+        createHearts(60); // Mega chuva de corações no fim de semana
       }
       
-      // Efeito de batimento cardíaco na carta
       div.parentElement.style.animation = 'none';
-      div.parentElement.offsetHeight; // Trigger reflow
+      div.parentElement.offsetHeight;
       div.parentElement.style.animation = 'heartBeat 0.8s ease';
     }
 
@@ -432,15 +435,17 @@
     }
 
     function createHearts(count) {
+      const heartColors = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍', '💖', '💗', '💓'];
+      
       for (let i = 0; i < count; i++) {
         const heart = document.createElement('div');
-        heart.innerHTML = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍'][Math.floor(Math.random() * 9)];
+        heart.innerHTML = heartColors[Math.floor(Math.random() * heartColors.length)];
         heart.className = 'heart';
         heart.style.left = Math.random() * 100 + 'vw';
         heart.style.top = -50 + 'px';
-        heart.style.fontSize = (Math.random() * 25 + 15) + 'px';
-        heart.style.animation = `floatDown ${Math.random() * 3 + 2}s linear forwards`;
-        heart.style.animationDelay = Math.random() * 2 + 's';
+        heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+        heart.style.animation = `floatDown ${Math.random() * 3 + 1}s linear forwards`;
+        heart.style.animationDelay = Math.random() * 1.5 + 's';
         document.body.appendChild(heart);
         
         setTimeout(() => {
@@ -449,17 +454,14 @@
       }
     }
 
-    // Inicialização
     window.onload = function() {
       setupButtons();
-      createHearts(15); // Chuva inicial de corações
+      createHearts(20); // Chuva inicial de corações
       
-      // Mostra automaticamente a carta do dia atual
       setTimeout(() => {
         mostrarCarta(diaAtual);
       }, 500);
     };
   </script>
-
 </body>
 </html>
